@@ -51,24 +51,10 @@ class Solution:
         # Classify network health based on the stats
         # Return: 'dead_neurons', 'exploding_gradients', 'vanishing_gradients', or 'healthy'
         # Check in priority order (see problem description for thresholds)
-        bools={"dead_neurons":False,
-                "exploding_gradients":False,
-                "vanishing_gradients":False,
-                }
-        for layer_stats in activation_stats:
-            if layer_stats["dead_fraction"]>0.5:
-                bools["dead_neurons"]=True
-            if layer_stats["std"]<0.1:
-                bools["vanishing_gradients"]=True 
-            if layer_stats["std"]>10:
-                bools["exploding_gradients"]=True
-        for layer_stats in gradient_stats:
-            if layer_stats["norm"]>1000:
-                bools["exploding_gradients"]=True
-            elif layer_stats["norm"]<1e-5:
-                bools["vanishing_gradients"]=True
-
-        
+        bools={"dead_neurons":any(s["dead_fraction"]>0.5 for s in activation_stats),
+                "exploding_gradients":any(s["std"]>10 for s in activation_stats) or any(s["norm"]>1000 for s in gradient_stats),
+                "vanishing_gradients":any(s["std"]<0.1 for s in activation_stats) or any(s["norm"]<1e-5 for s in gradient_stats),
+                }  
         for k,v in bools.items():
             if v:
                 return k
