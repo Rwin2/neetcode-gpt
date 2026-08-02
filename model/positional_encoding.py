@@ -12,10 +12,16 @@ class Solution:
         # Assign sine to even columns (PE[:, 0::2]) and cosine to odd columns (PE[:, 1::2]).
         # Round to 5 decimal places.
         PE=np.zeros((seq_len,d_model))
-        pos=np.arange(seq_len).reshape(-1,1) #(seq_len, 1)
-        power=np.arange(0,d_model,2)/d_model # (d_model/2,)
-        power=10000**power
-        angles= pos/power   # (seq_len,d_model)
-        PE[:,0::2]=np.sin(angles)
-        PE[:,1::2]=np.cos(angles)   
-        return np.round(PE,5) 
+        power=np.arange(0,d_model,2)/d_model
+        pos=np.arange(seq_len).reshape(-1,1)
+        PE[:,0::2]=np.sin(pos/10000**power)
+        PE[:,1::2]=np.cos(pos/10000**power)
+        return np.round(PE,5)
+
+
+
+
+
+
+
+
